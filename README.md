@@ -5,7 +5,7 @@ You can easily install theme and check/install its updates with one click from t
 
 ## How to install?
 - Download [latest etk-tool](https://github.com/symbuzzer/etk_tool/releases/latest/download/etk_tool.pygame)
-- Copy etk_tool.pygame to ROMS/PYGAME folder as a game room
+- Copy etk_tool.pygame to ROMS/PYGAME folder as a game rom
 - From Knulli, refresh gamelist and run etk-tool from PYGAME collection
 
 ## Why hasn't it any version number and changelog?
