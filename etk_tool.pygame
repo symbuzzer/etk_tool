@@ -1,0 +1,145 @@
+import pygame
+import requests
+import os
+import zipfile
+
+pygame.init()
+font = pygame.font.Font(None, 36)
+screen = pygame.display.set_mode((800, 600))
+pygame.display.set_caption("ETK Tool")
+
+def show_message(message):
+    screen.fill((0, 0, 0))
+    text_surface = font.render(message, True, (255, 255, 255))
+    screen.blit(text_surface, (20, 250))
+    pygame.display.flip()
+    pygame.time.wait(2000)
+
+def check_internet():
+    try:
+        requests.get("http://www.avalibeyaz.com", timeout=5)
+        return True
+    except requests.ConnectionError:
+        return False
+
+def get_local_version():
+    local_theme_file = "/userdata/themes/es-theme-knulli/theme.xml"
+    if not os.path.exists(local_theme_file):
+        return None
+    with open(local_theme_file, 'r') as file:
+        for line in file:
+            if "version:" in line:
+                return line.split(":")[1].strip()
+    return None
+
+def get_github_version():
+    github_url = "https://raw.githubusercontent.com/symbuzzer/es-theme-knulli/main/theme.xml"
+    response = requests.get(github_url)
+    if response.status_code != 200:
+        return None
+    for line in response.text.splitlines():
+        if "version:" in line:
+            return line.split(":")[1].strip()
+    return None
+
+def download_and_extract(url, extract_to):
+    
+    try:
+        response = requests.get(url, stream=True, timeout=10)
+        if response.status_code == 200:
+            zip_path = os.path.join(extract_to, "es-theme-knulli.zip")
+            with open(zip_path, 'wb') as file:
+                total_length = int(response.headers.get('content-length', 0))
+                downloaded = 0
+                
+                chunk_size = 10 * 1024 * 1024  # 10 MB
+                for data in response.iter_content(chunk_size=chunk_size):
+                    if data:
+                        file.write(data)
+                        downloaded += len(data)
+                        progress_message = f"Downloading... {downloaded / total_length * 100:.2f}%"
+                        show_message(progress_message)
+
+            show_message("Installing theme...")
+
+            try:
+                with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                    zip_ref.extractall(extract_to)
+                show_message("Installed successfully!")
+            except zipfile.BadZipFile:
+                show_message("Error: bad zip file")
+            except Exception as e:
+                show_message(f"Error: installation error {str(e)}")
+
+            try:
+                os.remove(zip_path)
+                show_message("Cleaning temp files...")
+            except Exception as e:
+                show_message(f"Error: zip cant erased {str(e)}")
+        else:
+            show_message(f"Error: download error 1: {response.status_code}")
+    except Exception as e:
+        show_message(f"Error: download error 2 {str(e)}")
+
+def update_theme():
+    theme_zip_url = "https://github.com/symbuzzer/es-theme-knulli/releases/latest/download/es-theme-knulli-update.zip"
+    download_path = "/userdata/themes/es-theme-knulli-update.zip"
+    
+    try:
+        response = requests.get(theme_zip_url, stream=True, timeout=10)
+        if response.status_code == 200:
+            with open(download_path, 'wb') as file:
+                total_length = int(response.headers.get('content-length', 0))
+                downloaded = 0
+
+                chunk_size = 10 * 1024 * 1024  # 10 MB
+                for data in response.iter_content(chunk_size=chunk_size):
+                    if data:
+                        file.write(data)
+                        downloaded += len(data)
+                        progress_message = f"Downloading... {downloaded / total_length * 100:.2f}%"
+                        show_message(progress_message)
+
+            show_message("Installing update...")
+
+            try:
+                with zipfile.ZipFile(download_path, 'r') as zip_ref:
+                    zip_ref.extractall("/userdata/themes/es-theme-knulli/")
+                show_message("Updated successfully!")
+            except zipfile.BadZipFile:
+                show_message("Error: bad zip file")
+            except Exception as e:
+                show_message(f"Error: update error {str(e)}")
+
+            try:
+                os.remove(download_path)
+                show_message("Cleaning temp files...")
+            except Exception as e:
+                show_message(f"Error: zip cant erased {str(e)}")
+        else:
+            show_message(f"Error: download error 1: {response.status_code}")
+    except Exception as e:
+        show_message(f"Error: download error 2 {str(e)}")
+
+if __name__ == "__main__":
+    show_message("Starting ETK Tool by Ali BEYAZ...")
+    if not check_internet():
+        show_message("Error: no internet connection, exiting...")
+    else:
+        local_version = get_local_version()
+        if local_version is None:
+            show_message("Theme isn't installed yet, will be downloaded")
+            download_and_extract("https://github.com/symbuzzer/es-theme-knulli/releases/latest/download/es-theme-knulli.zip", "/userdata/themes/")
+        else:
+            github_version = get_github_version()
+            if github_version is None:
+                show_message("Error: github problem")
+            else:
+                if local_version == github_version:
+                    show_message("There is no update on Github, exiting...")
+                else:
+                    show_message(f"New version found: {github_version}")
+                    update_theme()
+                    show_message("Exiting...")
+
+    pygame.quit()
