@@ -3,6 +3,8 @@ import requests
 import os
 import zipfile
 
+scriptVersion = "1.0.1"
+
 pygame.init()
 font = pygame.font.Font(None, 36)
 screen = pygame.display.set_mode((800, 600))
@@ -42,8 +44,17 @@ def get_github_version():
             return line.split(":")[1].strip()
     return None
 
+def get_tool_version_from_github():
+    github_url = "https://raw.githubusercontent.com/symbuzzer/etk_tool/main/etk_tool.pygame"
+    response = requests.get(github_url)
+    if response.status_code != 200:
+        return None
+    for line in response.text.splitlines():
+        if "scriptVersion =" in line:
+            return line.split("=")[1].strip().replace('"', '')
+    return None
+
 def download_and_extract(url, extract_to):
-    
     try:
         response = requests.get(url, stream=True, timeout=10)
         if response.status_code == 200:
@@ -51,7 +62,7 @@ def download_and_extract(url, extract_to):
             with open(zip_path, 'wb') as file:
                 total_length = int(response.headers.get('content-length', 0))
                 downloaded = 0
-                
+
                 chunk_size = 10 * 1024 * 1024  # 10 MB
                 for data in response.iter_content(chunk_size=chunk_size):
                     if data:
@@ -67,19 +78,19 @@ def download_and_extract(url, extract_to):
                     zip_ref.extractall(extract_to)
                 show_message("Installed successfully!")
             except zipfile.BadZipFile:
-                show_message("Error: bad zip file")
+                show_message("Error: bad zip file, exiting...")
             except Exception as e:
-                show_message(f"Error: installation error {str(e)}")
+                show_message(f"Error: installation error {str(e)}, exiting...")
 
             try:
                 os.remove(zip_path)
                 show_message("Cleaning temp files...")
             except Exception as e:
-                show_message(f"Error: zip cant erased {str(e)}")
+                show_message(f"Error: zip can't be erased {str(e)}, exiting...")
         else:
-            show_message(f"Error: download error 1: {response.status_code}")
+            show_message(f"Error: download error 1: {response.status_code}, exiting...")
     except Exception as e:
-        show_message(f"Error: download error 2 {str(e)}")
+        show_message(f"Error: download error 2 {str(e)}, exiting...")
 
 def update_theme():
     theme_zip_url = "https://github.com/symbuzzer/es-theme-knulli/releases/latest/download/es-theme-knulli-update.zip"
@@ -107,25 +118,48 @@ def update_theme():
                     zip_ref.extractall("/userdata/themes/es-theme-knulli/")
                 show_message("Updated successfully!")
             except zipfile.BadZipFile:
-                show_message("Error: bad zip file")
+                show_message("Error: bad zip file, exiting...")
             except Exception as e:
-                show_message(f"Error: update error {str(e)}")
+                show_message(f"Error: update error {str(e)}, exiting...")
 
             try:
                 os.remove(download_path)
                 show_message("Cleaning temp files...")
             except Exception as e:
-                show_message(f"Error: zip cant erased {str(e)}")
+                show_message(f"Error: zip can't be erased {str(e)}, exiting...")
         else:
-            show_message(f"Error: download error 1: {response.status_code}")
+            show_message(f"Error: download error 1: {response.status_code}, exiting...")
     except Exception as e:
-        show_message(f"Error: download error 2 {str(e)}")
+        show_message(f"Error: download error 2 {str(e)}, exiting...")
+
+def update_tool():
+    tool_url = "https://raw.githubusercontent.com/symbuzzer/etk_tool/main/etk_tool.pygame"
+    local_tool_path = "/userdata/roms/pygame/etk_tool.pygame"
+    
+    try:
+        response = requests.get(tool_url, timeout=10)
+        if response.status_code == 200:
+            with open(local_tool_path, 'wb') as file:
+                file.write(response.content)
+            show_message("ETK Tool updated successfully, exiting...")
+        else:
+            show_message(f"Error: download error {response.status_code}, exiting...")
+    except Exception as e:
+        show_message(f"Error: download failed {str(e)}, exiting...")
 
 if __name__ == "__main__":
-    show_message("Starting ETK Tool by Ali BEYAZ...")
+    show_message(f"Starting ETK Tool v{scriptVersion} by Ali BEYAZ...")
+    
     if not check_internet():
         show_message("Error: no internet connection, exiting...")
     else:
+        github_tool_version = get_tool_version_from_github()
+        if github_tool_version and github_tool_version != scriptVersion:
+            show_message(f"New tool version found: {github_tool_version}, updating tool...")
+            update_tool()
+            pygame.quit()
+            exit()
+
         local_version = get_local_version()
         if local_version is None:
             show_message("Theme isn't installed yet, will be downloaded")
@@ -133,10 +167,10 @@ if __name__ == "__main__":
         else:
             github_version = get_github_version()
             if github_version is None:
-                show_message("Error: github problem")
+                show_message("Error: github problem, exiting...")
             else:
                 if local_version == github_version:
-                    show_message("There is no update on Github, exiting...")
+                    show_message("There is no theme update on Github, exiting...")
                 else:
                     show_message(f"New version found: {github_version}")
                     update_theme()
