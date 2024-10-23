@@ -155,7 +155,7 @@ if __name__ == "__main__":
     else:
         github_tool_version = get_tool_version_from_github()
         if github_tool_version and github_tool_version != scriptVersion:
-            show_message(f"New tool version found: {github_tool_version}, updating tool...")
+            show_message(f"New ETK tool update found: {github_tool_version}, updating...")
             update_tool()
             pygame.quit()
             exit()
