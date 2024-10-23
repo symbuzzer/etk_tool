@@ -141,7 +141,7 @@ def update_tool():
         if response.status_code == 200:
             with open(local_tool_path, 'wb') as file:
                 file.write(response.content)
-            show_message("ETK Tool updated successfully, exiting...")
+            show_message("ETK Tool updated successfully, please restart")
         else:
             show_message(f"Error: download error {response.status_code}, exiting...")
     except Exception as e:
