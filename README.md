@@ -8,5 +8,5 @@ You can easily install theme and check/install its updates with one click from t
 - Copy etk_tool.pygame to ROMS/PYGAME folder as a game rom
 - From Knulli, refresh gamelist and run etk-tool from PYGAME collection
 
-## Why hasn't it any version number and changelog?
-Because it is a simple script for doing basic things. So no need for this, maybe later I can add regular versioning, changelog and self updater. Who knows...
+## What is new?
+[Changelog](https://github.com/symbuzzer/etk_tool/blob/main/CHANGELOG.md)
