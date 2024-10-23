@@ -9,4 +9,4 @@ You can easily install theme and check/install its updates with one click from t
 - From Knulli, refresh gamelist and run etk-tool from PYGAME collection
 
 ## What is new?
-[Changelog](https://github.com/symbuzzer/etk_tool/blob/main/CHANGELOG.md)
+[Changelog](https://github.com/symbuzzer/etk_tool/main/CHANGELOG.md)
