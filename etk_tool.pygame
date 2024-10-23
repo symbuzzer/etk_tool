@@ -3,7 +3,7 @@ import requests
 import os
 import zipfile
 
-scriptVersion = "1.0.1"
+scriptVersion = "1.0.0"
 
 pygame.init()
 font = pygame.font.Font(None, 36)
