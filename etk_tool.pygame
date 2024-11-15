@@ -3,7 +3,7 @@ import requests
 import os
 import zipfile
 
-scriptVersion = "1.0.0"
+scriptVersion = "1.1.0"
 
 pygame.init()
 font = pygame.font.Font(None, 36)
@@ -93,8 +93,8 @@ def download_and_extract(url, extract_to):
         show_message(f"Error: download error 2 {str(e)}, exiting...")
 
 def update_theme():
-    theme_zip_url = "https://github.com/symbuzzer/es-theme-knulli/releases/latest/download/es-theme-knulli-update.zip"
-    download_path = "/userdata/themes/es-theme-knulli-update.zip"
+    theme_zip_url = "https://github.com/symbuzzer/es-theme-knulli/releases/latest/download/es-theme-knulli.zip"
+    download_path = "/userdata/themes/es-theme-knulli.zip"
     
     try:
         response = requests.get(theme_zip_url, stream=True, timeout=10)
@@ -115,7 +115,7 @@ def update_theme():
 
             try:
                 with zipfile.ZipFile(download_path, 'r') as zip_ref:
-                    zip_ref.extractall("/userdata/themes/es-theme-knulli/")
+                    zip_ref.extractall("/userdata/themes/")
                 show_message("Updated successfully!")
             except zipfile.BadZipFile:
                 show_message("Error: bad zip file, exiting...")
