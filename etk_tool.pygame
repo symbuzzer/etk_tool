@@ -125,8 +125,8 @@ def update_theme():
             shutil.rmtree(theme_dir)
 
         download_and_extract(theme_zip_url, os.path.dirname(theme_dir))
-        show_message("Theme update complete!")
         os.system("sh /usr/bin/batocera-save-overlay")
+        show_message("Theme update complete!")
     except Exception as e:
         show_message(f"Error during update: {str(e)}, exiting...")
 
