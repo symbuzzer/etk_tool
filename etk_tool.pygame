@@ -2,18 +2,25 @@ import pygame
 import requests
 import os
 import zipfile
+import shutil
 
-scriptVersion = "1.1.0"
+scriptVersion = "1.2.0"
 
 pygame.init()
 font = pygame.font.Font(None, 36)
 screen = pygame.display.set_mode((800, 600))
 pygame.display.set_caption("ETK Tool")
 
+theme_directories = [
+    "/userdata/themes/es-theme-knulli",
+    "/usr/share/emulationstation/themes/es-theme-knulli"
+]
+
 def show_message(message):
     screen.fill((0, 0, 0))
     text_surface = font.render(message, True, (255, 255, 255))
-    screen.blit(text_surface, (20, 250))
+    text_rect = text_surface.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
+    screen.blit(text_surface, text_rect.topleft)
     pygame.display.flip()
     pygame.time.wait(2000)
 
@@ -24,11 +31,17 @@ def check_internet():
     except requests.ConnectionError:
         return False
 
-def get_local_version():
-    local_theme_file = "/userdata/themes/es-theme-knulli/theme.xml"
-    if not os.path.exists(local_theme_file):
+def find_theme_directory():
+    for theme_dir in theme_directories:
+        if os.path.exists(theme_dir):
+            return theme_dir
+    return None
+
+def get_local_version(theme_dir):
+    theme_file = os.path.join(theme_dir, "theme.xml")
+    if not os.path.exists(theme_file):
         return None
-    with open(local_theme_file, 'r') as file:
+    with open(theme_file, 'r') as file:
         for line in file:
             if "version:" in line:
                 return line.split(":")[1].strip()
@@ -53,6 +66,13 @@ def get_tool_version_from_github():
         if "scriptVersion =" in line:
             return line.split("=")[1].strip().replace('"', '')
     return None
+
+def parse_version(version):
+    """Parse a version string into a tuple of integers for comparison."""
+    try:
+        return tuple(map(int, version.split(".")))
+    except ValueError:
+        return (0, 0, 0)  # Default to a very old version if parsing fails
 
 def download_and_extract(url, extract_to):
     try:
@@ -94,43 +114,21 @@ def download_and_extract(url, extract_to):
 
 def update_theme():
     theme_zip_url = "https://github.com/symbuzzer/es-theme-knulli/releases/latest/download/es-theme-knulli.zip"
-    download_path = "/userdata/themes/es-theme-knulli.zip"
+    theme_dir = find_theme_directory()
+
+    if theme_dir is None:
+        show_message("Error: Theme directory not found, exiting...")
+        return
     
     try:
-        response = requests.get(theme_zip_url, stream=True, timeout=10)
-        if response.status_code == 200:
-            with open(download_path, 'wb') as file:
-                total_length = int(response.headers.get('content-length', 0))
-                downloaded = 0
+        if os.path.exists(theme_dir):
+            show_message("Cleaning existing theme...")
+            shutil.rmtree(theme_dir)
 
-                chunk_size = 10 * 1024 * 1024  # 10 MB
-                for data in response.iter_content(chunk_size=chunk_size):
-                    if data:
-                        file.write(data)
-                        downloaded += len(data)
-                        progress_message = f"Downloading... {downloaded / total_length * 100:.2f}%"
-                        show_message(progress_message)
-
-            show_message("Installing update...")
-
-            try:
-                with zipfile.ZipFile(download_path, 'r') as zip_ref:
-                    zip_ref.extractall("/userdata/themes/")
-                show_message("Updated successfully!")
-            except zipfile.BadZipFile:
-                show_message("Error: bad zip file, exiting...")
-            except Exception as e:
-                show_message(f"Error: update error {str(e)}, exiting...")
-
-            try:
-                os.remove(download_path)
-                show_message("Cleaning temp files...")
-            except Exception as e:
-                show_message(f"Error: zip can't be erased {str(e)}, exiting...")
-        else:
-            show_message(f"Error: download error 1: {response.status_code}, exiting...")
+        download_and_extract(theme_zip_url, os.path.dirname(theme_dir))
+        show_message("Theme update complete!")
     except Exception as e:
-        show_message(f"Error: download error 2 {str(e)}, exiting...")
+        show_message(f"Error during update: {str(e)}, exiting...")
 
 def update_tool():
     tool_url = "https://github.com/symbuzzer/etk_tool/releases/latest/download/etk_tool.pygame"
@@ -154,26 +152,25 @@ if __name__ == "__main__":
         show_message("Error: no internet connection, exiting...")
     else:
         github_tool_version = get_tool_version_from_github()
-        if github_tool_version and github_tool_version != scriptVersion:
+        if github_tool_version and parse_version(github_tool_version) > parse_version(scriptVersion):
             show_message(f"New ETK Tool update found: {github_tool_version}, updating...")
             update_tool()
             pygame.quit()
             exit()
 
-        local_version = get_local_version()
-        if local_version is None:
-            show_message("Theme isn't installed yet, will be downloaded")
+        theme_dir = find_theme_directory()
+        if theme_dir is None:
+            show_message("Theme isn't installed yet, downloading...")
             download_and_extract("https://github.com/symbuzzer/es-theme-knulli/releases/latest/download/es-theme-knulli.zip", "/userdata/themes/")
         else:
+            local_version = get_local_version(theme_dir)
             github_version = get_github_version()
             if github_version is None:
                 show_message("Error: github problem, exiting...")
+            elif local_version is not None and parse_version(local_version) >= parse_version(github_version):
+                show_message("There is no theme update on Github, exiting...")
             else:
-                if local_version == github_version:
-                    show_message("There is no theme update on Github, exiting...")
-                else:
-                    show_message(f"New version found: {github_version}")
-                    update_theme()
-                    show_message("Exiting...")
+                show_message(f"New version found: {github_version}")
+                update_theme()
 
     pygame.quit()
