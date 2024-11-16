@@ -1,6 +1,6 @@
 # es-theme-knulli easy installer &amp; updater for Knulli
 ## What is this?
-This ise a easy installer and updater for [es-theme-knulli](https://github.com/symbuzzer/es-theme-knulli) theme for Knulli installed devices.  
+This is a easy installer and updater for [es-theme-knulli](https://github.com/symbuzzer/es-theme-knulli) theme for Knulli installed devices.  
 You can easily install theme and check/install its updates with one click from this tool.  
 Also it updates itself silencely when an update is available.
 
