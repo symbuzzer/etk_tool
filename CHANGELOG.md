@@ -1,3 +1,6 @@
+# v1.2.1
+- Fixed not saving new update when theme pre-isntalled by Knulli
+
 # v1.2.0
 - Added checking theme installation directory and now updates bot user-installed or pre-isntalled variants
 - Cleaning old theme files befor updating theme
