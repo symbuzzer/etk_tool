@@ -4,7 +4,7 @@ import os
 import zipfile
 import shutil
 
-scriptVersion = "1.2.0"
+scriptVersion = "1.2.1"
 
 pygame.init()
 font = pygame.font.Font(None, 36)
@@ -68,7 +68,6 @@ def get_tool_version_from_github():
     return None
 
 def parse_version(version):
-    """Parse a version string into a tuple of integers for comparison."""
     try:
         return tuple(map(int, version.split(".")))
     except ValueError:
@@ -127,6 +126,7 @@ def update_theme():
 
         download_and_extract(theme_zip_url, os.path.dirname(theme_dir))
         show_message("Theme update complete!")
+        os.system("sh /usr/bin/batocera-save-overlay")
     except Exception as e:
         show_message(f"Error during update: {str(e)}, exiting...")
 
@@ -170,7 +170,7 @@ if __name__ == "__main__":
             elif local_version is not None and parse_version(local_version) >= parse_version(github_version):
                 show_message("There is no theme update on Github, exiting...")
             else:
-                show_message(f"New version found: {github_version}")
+                show_message(f"New theme version found: {github_version}")
                 update_theme()
 
     pygame.quit()
