@@ -131,7 +131,20 @@ def determine_theme_url(beta_version):
         return f"https://github.com/symbuzzer/etk_tool/releases/tag/v{beta_version}/es-theme-knulli.zip"
     return "https://github.com/symbuzzer/es-theme-knulli/releases/latest/download/es-theme-knulli.zip"
 
+def install_theme():
+    """Install theme for the first time using the normal version."""
+    versions = get_github_versions()
+    normal_version = versions[0]
+    if not normal_version:
+        show_message("Error: no theme version found on Github, exiting...")
+        return
+    
+    theme_zip_url = determine_theme_url(None)
+    download_and_extract(theme_zip_url, "/userdata/themes/")
+    show_message(f"Theme version {normal_version} installed successfully!")
+
 def update_theme():
+    """Update theme by comparing local, normal, and beta versions."""
     versions = get_github_versions()
     theme_xml_version = parse_version(versions[0]) if versions[0] else (0, 0, 0)
     beta_version = versions[1]
@@ -196,7 +209,7 @@ if __name__ == "__main__":
 
         if theme_dir is None:
             show_message("Theme isn't installed yet, downloading...")
-            update_theme()
+            install_theme()
         else:
             local_version = get_local_version(theme_dir)
             if not versions[0] and not beta_version:
