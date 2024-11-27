@@ -128,7 +128,7 @@ def get_github_versions():
 
 def determine_theme_url(beta_version):
     if beta_version:
-        return f"https://github.com/symbuzzer/etk_tool/releases/tag/v{beta_version}/es-theme-knulli.zip"
+        return f"https://github.com/symbuzzer/es-theme-knulli/releases/download/v{beta_version}/es-theme-knulli.zip"
     return "https://github.com/symbuzzer/es-theme-knulli/releases/latest/download/es-theme-knulli.zip"
 
 def install_theme():
