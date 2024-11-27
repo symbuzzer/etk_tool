@@ -4,7 +4,7 @@ import os
 import zipfile
 import shutil
 
-scriptVersion = "1.2.1"
+scriptVersion = "1.3.0"
 
 pygame.init()
 font = pygame.font.Font(None, 36)
@@ -32,12 +32,20 @@ def check_internet():
         return False
 
 def find_theme_directory():
-    for theme_dir in theme_directories:
+    """Return the preferred theme directory if it exists."""
+    if os.path.exists(theme_directories[0]):
+        return theme_directories[0]
+    for theme_dir in theme_directories[1:]:
         if os.path.exists(theme_dir):
             return theme_dir
     return None
 
 def get_local_version(theme_dir):
+    """Read the theme version from the theme.xml in the preferred directory."""
+    if theme_dir == theme_directories[1] and os.path.exists(theme_directories[0]):
+        # Prefer userdata theme version if both exist
+        theme_dir = theme_directories[0]
+    
     theme_file = os.path.join(theme_dir, "theme.xml")
     if not os.path.exists(theme_file):
         return None
@@ -45,16 +53,6 @@ def get_local_version(theme_dir):
         for line in file:
             if "version:" in line:
                 return line.split(":")[1].strip()
-    return None
-
-def get_github_version():
-    github_url = "https://raw.githubusercontent.com/symbuzzer/es-theme-knulli/main/theme.xml"
-    response = requests.get(github_url)
-    if response.status_code != 200:
-        return None
-    for line in response.text.splitlines():
-        if "version:" in line:
-            return line.split(":")[1].strip()
     return None
 
 def get_tool_version_from_github():
@@ -111,14 +109,47 @@ def download_and_extract(url, extract_to):
     except Exception as e:
         show_message(f"Error: download error 2 {str(e)}, exiting...")
 
-def update_theme():
-    theme_zip_url = "https://github.com/symbuzzer/es-theme-knulli/releases/latest/download/es-theme-knulli.zip"
-    theme_dir = find_theme_directory()
+def get_github_versions():
+    base_url = "https://raw.githubusercontent.com/symbuzzer/es-theme-knulli/main/"
+    files = ["theme.xml", "betaversion"]
+    versions = []
 
+    for file in files:
+        response = requests.get(base_url + file)
+        if response.status_code == 200:
+            for line in response.text.splitlines():
+                if "version:" in line:
+                    versions.append(line.split(":")[1].strip())
+                    break
+        else:
+            versions.append(None)
+
+    return versions
+
+def determine_theme_url(beta_version):
+    base_url = "https://github.com/symbuzzer/etk_tool/releases/tag/v"
+    if beta_version:
+        return base_url + beta_version
+    return "https://github.com/symbuzzer/es-theme-knulli/releases/latest/download/es-theme-knulli.zip"
+
+def update_theme():
+    versions = get_github_versions()
+    theme_xml_version = parse_version(versions[0]) if versions[0] else (0, 0, 0)
+    beta_version = versions[1]
+    beta_version_tuple = parse_version(beta_version) if beta_version else (0, 0, 0)
+
+    if beta_version and beta_version_tuple > theme_xml_version:
+        show_message(f"New theme beta update found: {beta_version}")
+        theme_zip_url = determine_theme_url(beta_version)
+    else:
+        show_message(f"New theme update found: {versions[0]}")
+        theme_zip_url = determine_theme_url(None)
+
+    theme_dir = find_theme_directory()
     if theme_dir is None:
         show_message("Error: Theme directory not found, exiting...")
         return
-    
+
     try:
         if os.path.exists(theme_dir):
             show_message("Cleaning existing theme...")
@@ -159,18 +190,21 @@ if __name__ == "__main__":
             exit()
 
         theme_dir = find_theme_directory()
+        versions = get_github_versions()
+        theme_xml_version = parse_version(versions[0]) if versions[0] else (0, 0, 0)
+        beta_version = versions[1]
+        beta_version_tuple = parse_version(beta_version) if beta_version else (0, 0, 0)
+
         if theme_dir is None:
             show_message("Theme isn't installed yet, downloading...")
-            download_and_extract("https://github.com/symbuzzer/es-theme-knulli/releases/latest/download/es-theme-knulli.zip", "/userdata/themes/")
+            update_theme()
         else:
             local_version = get_local_version(theme_dir)
-            github_version = get_github_version()
-            if github_version is None:
+            if not versions[0] and not beta_version:
                 show_message("Error: github problem, exiting...")
-            elif local_version is not None and parse_version(local_version) >= parse_version(github_version):
+            elif local_version and parse_version(local_version) >= max(theme_xml_version, beta_version_tuple):
                 show_message("There is no theme update on Github, exiting...")
             else:
-                show_message(f"New theme version found: {github_version}")
                 update_theme()
 
     pygame.quit()
