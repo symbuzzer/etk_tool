@@ -1,3 +1,7 @@
+# v1.3.0
+- Added theme beta update feature
+- Fixed issues abouut when the theme installed from batocera servers (from ES settings)
+
 # v1.2.1
 - Fixed not saving new update when theme pre-installed by Knulli
 
