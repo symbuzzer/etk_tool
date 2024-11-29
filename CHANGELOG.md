@@ -1,3 +1,6 @@
+# v1.3.1
+- Fixed not update theme when it is pre-installed issue
+
 # v1.3.0
 - Added theme beta update feature
 - Fixed issues about when the theme installed from batocera servers (from ES settings)
