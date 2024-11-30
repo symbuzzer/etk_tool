@@ -1,3 +1,6 @@
+# v2.0.0
+- Rewritten from scratch
+
 # v1.3.3
 - Removed some duplicated messages
 
