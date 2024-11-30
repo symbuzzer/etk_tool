@@ -1,3 +1,6 @@
+# v1.3.3
+- Removed some duplicated messages
+
 # v1.3.2
 - Fixed an issue which causes not update theme when pre-installed and installed to userspace
 - Added show installed theme version string
