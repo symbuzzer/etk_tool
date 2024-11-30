@@ -4,10 +4,11 @@ import os
 import zipfile
 import shutil
 
-scriptVersion = "1.3.1"
+scriptVersion = "1.3.2"
 
 pygame.init()
 font = pygame.font.Font(None, 36)
+message_font = pygame.font.Font(None, 48)
 screen = pygame.display.set_mode((800, 600))
 pygame.display.set_caption("ETK Tool")
 
@@ -18,7 +19,7 @@ theme_directories = [
 
 def show_message(message):
     screen.fill((0, 0, 0))
-    text_surface = font.render(message, True, (255, 255, 255))
+    text_surface = message_font.render(message, True, (255, 255, 255))
     text_rect = text_surface.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
     screen.blit(text_surface, text_rect.topleft)
     pygame.display.flip()
@@ -39,17 +40,14 @@ def find_theme_directory():
             return theme_dir
     return None
 
-def get_local_version(theme_dir):
-    if theme_dir == theme_directories[1] and os.path.exists(theme_directories[0]):
-        theme_dir = theme_directories[0]
-    
-    theme_file = os.path.join(theme_dir, "theme.xml")
-    if not os.path.exists(theme_file):
-        return None
-    with open(theme_file, 'r') as file:
-        for line in file:
-            if "version:" in line:
-                return line.split(":")[1].strip()
+def get_local_version():
+    for theme_dir in theme_directories[::-1]:
+        theme_file = os.path.join(theme_dir, "theme.xml")
+        if os.path.exists(theme_file):
+            with open(theme_file, 'r') as file:
+                for line in file:
+                    if "version:" in line:
+                        return line.split(":")[1].strip()
     return None
 
 def get_tool_version_from_github():
@@ -200,6 +198,15 @@ if __name__ == "__main__":
             exit()
 
         theme_dir = find_theme_directory()
+        if theme_dir:
+            local_version = get_local_version()
+            if local_version:
+                show_message(f"Installed theme version: {local_version}")
+            else:
+                show_message("Installed theme version: Unknown")
+        else:
+            show_message("No theme installed yet.")
+        
         versions = get_github_versions()
         theme_xml_version = parse_version(versions[0]) if versions[0] else (0, 0, 0)
         beta_version = versions[1]
@@ -209,7 +216,7 @@ if __name__ == "__main__":
             show_message("Theme isn't installed yet, downloading...")
             install_theme()
         else:
-            local_version = get_local_version(theme_dir)
+            local_version = get_local_version()
             if not versions[0] and not beta_version:
                 show_message("Error: github problem, exiting...")
             elif local_version and parse_version(local_version) >= max(theme_xml_version, beta_version_tuple):
