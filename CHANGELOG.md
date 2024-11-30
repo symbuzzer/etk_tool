@@ -1,3 +1,8 @@
+# v1.3.2
+- Fixed an issue which causes not update theme when pre-installed and installed to userspace
+- Added show installed theme version string
+- Font size enlarged
+
 # v1.3.1
 - Fixed not update theme when it is pre-installed issue
 
