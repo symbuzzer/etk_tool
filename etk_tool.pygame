@@ -55,14 +55,27 @@ def download_file(url, destination):
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
-    return destination
+    show_message_dynamic("Download complete!")
+
+def extract_zip(zip_path, extract_to):
+    show_message_dynamic("Extracting files...")
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        file_count = len(zip_ref.namelist())
+        for idx, file in enumerate(zip_ref.namelist(), start=1):
+            zip_ref.extract(file, extract_to)
+            progress = (idx / file_count) * 100
+            show_message_dynamic(f"Extracting: {progress:.2f}%")
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+    show_message_dynamic("Extraction complete!")
 
 def update_theme(destination):
     download_url = "https://github.com/symbuzzer/es-theme-knulli/releases/latest/download/es-theme-knulli.zip"
     zip_path = os.path.join(destination, "es-theme-knulli.zip")
     download_file(download_url, zip_path)
-    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-        zip_ref.extractall(destination)
+    extract_zip(zip_path, destination)
     os.remove(zip_path)
 
 def main():
