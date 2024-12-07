@@ -3,6 +3,7 @@ import requests
 import os
 import zipfile
 import re
+import shutil
 
 scriptVersion = "2.1.0"
 
@@ -13,12 +14,13 @@ message_font = pygame.font.Font(None, 48)
 screen = pygame.display.set_mode((800, 600))
 pygame.display.set_caption("ETK Tool")
 
-def show_message_dynamic(message):
+def show_message(message):
     screen.fill((0, 0, 0))
     text_surface = message_font.render(message, True, (255, 255, 255))
     text_rect = text_surface.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
     screen.blit(text_surface, text_rect.topleft)
     pygame.display.flip()
+    pygame.time.wait(2000)
 
 def check_internet():
     try:
@@ -37,75 +39,93 @@ def get_remote_version():
     except requests.ConnectionError:
         return None
 
+def get_local_theme_version(path):
+    if os.path.exists(path):
+        try:
+            with open(os.path.join(path, "theme.xml"), 'r') as f:
+                content = f.read()
+                match = re.search(r'<v\.themeVersion>(.*?)</v\.themeVersion>', content)
+                return match.group(1) if match else None
+        except Exception:
+            return None
+    return None
+
+def get_remote_theme_version():
+    url = "https://raw.githubusercontent.com/symbuzzer/es-theme-knulli/refs/heads/main/theme.xml"
+    try:
+        response = requests.get(url, timeout=5)
+        if response.status_code == 200:
+            match = re.search(r'<v\.themeVersion>(.*?)</v\.themeVersion>', response.text)
+            return match.group(1) if match else None
+    except requests.ConnectionError:
+        return None
+
 def download_file(url, destination):
     response = requests.get(url, stream=True)
-    total_length = response.headers.get('content-length')
-    total_length = int(total_length) if total_length else None
-    downloaded = 0
+    total_length = int(response.headers.get('content-length'))
     with open(destination, 'wb') as f:
+        downloaded = 0
         for data in response.iter_content(chunk_size=10 * 1024 * 1024):
             downloaded += len(data)
             f.write(data)
-            if total_length:
-                percent = (downloaded / total_length) * 100
-                show_message_dynamic(f"Downloading: {percent:.2f}%")
-            else:
-                show_message_dynamic("Downloading: Unknown size")
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    exit()
-    show_message_dynamic("Download complete!")
-
-def extract_zip(zip_path, extract_to):
-    show_message_dynamic("Extracting files...")
-    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-        file_count = len(zip_ref.namelist())
-        for idx, file in enumerate(zip_ref.namelist(), start=1):
-            zip_ref.extract(file, extract_to)
-            progress = (idx / file_count) * 100
-            show_message_dynamic(f"Extracting: {progress:.2f}%")
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    exit()
-    show_message_dynamic("Extraction complete!")
+            percent = (downloaded / total_length) * 100
+            show_message(f"Downloading: {percent:.2f}%")
+    return destination
 
 def update_theme(destination):
     download_url = "https://github.com/symbuzzer/es-theme-knulli/releases/latest/download/es-theme-knulli.zip"
-    zip_path = os.path.join(destination, "es-theme-knulli.zip")
-    download_file(download_url, zip_path)
-    extract_zip(zip_path, destination)
-    os.remove(zip_path)
+    download_file(download_url, destination + "/es-theme-knulli.zip")
+    with zipfile.ZipFile(destination + "/es-theme-knulli.zip", 'r') as zip_ref:
+        zip_ref.extractall(destination)
+    os.remove(destination + "/es-theme-knulli.zip")
+    os.system("sh /usr/bin/batocera-save-overlay")
 
 def main():
-    show_message_dynamic(f"Starting ETK Tool v{scriptVersion} by Ali BEYAZ...")
+    show_message(f"Starting ETK Tool v{scriptVersion} by Ali BEYAZ...")
 
     if not check_internet():
-        show_message_dynamic("No internet connection. Exiting...")
-        pygame.time.wait(2000)
+        show_message("No internet connection. Exiting...")
         pygame.quit()
         exit()
 
     remote_version = get_remote_version()
     if remote_version and remote_version > scriptVersion:
-        show_message_dynamic(f"ETK Tool v{remote_version} is available! Updating now...")
+        show_message(f"ETK Tool v{remote_version} is available! Updating now...")
         download_file("https://raw.githubusercontent.com/symbuzzer/etk_tool/main/etk_tool.pygame", "/userdata/roms/pygame/etk_tool.pygame")
-        show_message_dynamic("ETK Tool updated! Please restart.")
-        pygame.time.wait(2000)
+        show_message("ETK Tool updated! Please restart.")
         pygame.quit()
         exit()
 
-    theme_path = "/userdata/themes/es-theme-knulli"
-    if not os.path.exists(theme_path):
-        os.makedirs(theme_path)
+    local_theme_path = "/usr/share/emulationstation/themes/es-theme-knulli"
+    userdata_theme_path = "/userdata/themes/es-theme-knulli"
+    theme_destination = None
 
-    show_message_dynamic("Downloading theme...")
-    update_theme(theme_path)
-    show_message_dynamic("Theme installed successfully! Exiting...")
-    pygame.time.wait(2000)
-    pygame.quit()
-    exit()
+    if os.path.exists(local_theme_path):
+        theme_destination = "/usr/share/emulationstation/themes"
+    elif os.path.exists(userdata_theme_path):
+        theme_destination = "/userdata/themes"
+
+    if theme_destination:
+        local_version = get_local_theme_version(theme_destination + "/es-theme-knulli")
+        remote_theme_version = get_remote_theme_version()
+
+        if local_version and remote_theme_version and remote_theme_version > local_version:
+            show_message(f"Theme updating to v{remote_theme_version}...")
+            update_theme(theme_destination)
+            show_message("Theme update complete! Exiting...")
+            pygame.quit()
+            exit()
+        else:
+            show_message(f"v{remote_theme_version} already installed!")
+            show_message("No updates available. Exiting...")
+            pygame.quit()
+            exit()
+    else:
+        show_message("Theme not installed. Starting to download...")
+        update_theme("/userdata/themes")
+        show_message("Theme installed successfully! Exiting...")
+        pygame.quit()
+        exit()
 
 if __name__ == "__main__":
     main()
