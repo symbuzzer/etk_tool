@@ -5,7 +5,7 @@ import zipfile
 import re
 import shutil
 
-scriptVersion = "2.1.0"
+scriptVersion = "2.0.0"
 
 pygame.init()
 
