@@ -1,3 +1,8 @@
+# v2.0.1
+- Fixed some serious issues
+- Modified a lot of strings due giving right infos to user
+- Added theme beta updater feature
+
 # v2.0.0
 - Rewritten from scratch
 
