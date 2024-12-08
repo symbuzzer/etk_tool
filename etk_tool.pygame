@@ -5,7 +5,7 @@ import zipfile
 import re
 import shutil
 
-scriptVersion = "2.0.0"
+scriptVersion = "2.0.1"
 
 pygame.init()
 
@@ -51,34 +51,58 @@ def get_local_theme_version(path):
     return None
 
 def get_remote_theme_version():
-    url = "https://raw.githubusercontent.com/symbuzzer/es-theme-knulli/refs/heads/main/theme.xml"
-    try:
-        response = requests.get(url, timeout=5)
-        if response.status_code == 200:
-            match = re.search(r'<v\.themeVersion>(.*?)</v\.themeVersion>', response.text)
-            return match.group(1) if match else None
-    except requests.ConnectionError:
+    urls = [
+        "https://raw.githubusercontent.com/symbuzzer/es-theme-knulli/refs/heads/main/theme.xml",
+        "https://raw.githubusercontent.com/symbuzzer/es-theme-knulli/refs/heads/main/beta.version"
+    ]
+    
+    versions = []
+    for url in urls:
+        try:
+            response = requests.get(url, timeout=5)
+            if response.status_code == 200:
+                match = re.search(r'<v\.themeVersion>(.*?)</v\.themeVersion>', response.text)
+                if match:
+                    versions.append(match.group(1))
+        except requests.ConnectionError:
+            pass
+
+    if versions:
+        max_version = max(versions)
+        beta_version_index = versions.index(max_version)
+        if beta_version_index == 1:
+            show_message(f"Beta version of theme found: v{max_version}")
+        else:
+            show_message(f"New theme update is found: v{max_version}")
+        return max_version
+    else:
         return None
 
 def download_file(url, destination):
-    response = requests.get(url, stream=True)
-    total_length = int(response.headers.get('content-length'))
-    with open(destination, 'wb') as f:
+    try:
+        response = requests.get(url, stream=True, timeout=10)
+        if response.status_code != 200:
+            raise Exception(f"Failed to download file. HTTP {response.status_code}")
+        total_length = int(response.headers.get('content-length', 0))
         downloaded = 0
-        for data in response.iter_content(chunk_size=10 * 1024 * 1024):
-            downloaded += len(data)
-            f.write(data)
-            percent = (downloaded / total_length) * 100
-            show_message(f"Downloading: {percent:.2f}%")
-    return destination
+        with open(destination, 'wb') as f:
+            for data in response.iter_content(chunk_size=100 * 1024 * 1024):
+                downloaded += len(data)
+                f.write(data)
+        return destination
+    except Exception as e:
+        show_message(f"Error downloading: {str(e)}")
+        raise
 
-def update_theme(destination):
-    download_url = "https://github.com/symbuzzer/es-theme-knulli/releases/latest/download/es-theme-knulli.zip"
-    download_file(download_url, destination + "/es-theme-knulli.zip")
-    with zipfile.ZipFile(destination + "/es-theme-knulli.zip", 'r') as zip_ref:
-        zip_ref.extractall(destination)
-    os.remove(destination + "/es-theme-knulli.zip")
-    os.system("sh /usr/bin/batocera-save-overlay")
+def update_theme(destination, download_url):
+        show_message("Downloading...")
+        zip_path = os.path.join(destination, "es-theme-knulli.zip")
+        download_file(download_url, zip_path)
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            show_message("Installing theme...")
+            zip_ref.extractall(destination)
+        os.remove(zip_path)
+        os.system("sh /usr/bin/batocera-save-overlay")
 
 def main():
     show_message(f"Starting ETK Tool v{scriptVersion} by Ali BEYAZ...")
@@ -111,18 +135,18 @@ def main():
 
         if local_version and remote_theme_version and remote_theme_version > local_version:
             show_message(f"Theme updating to v{remote_theme_version}...")
-            update_theme(theme_destination)
+            update_theme(theme_destination, f"https://github.com/symbuzzer/es-theme-knulli/releases/download/v{remote_theme_version}/es-theme-knulli.zip")
             show_message("Theme update complete! Exiting...")
             pygame.quit()
             exit()
         else:
-            show_message(f"v{remote_theme_version} already installed!")
+            show_message(f"Theme v{remote_theme_version} already installed!")
             show_message("No updates available. Exiting...")
             pygame.quit()
             exit()
     else:
-        show_message("Theme not installed. Starting to download...")
-        update_theme("/userdata/themes")
+        show_message("Theme not installed yet!")
+        update_theme("/userdata/themes", "https://github.com/symbuzzer/es-theme-knulli/releases/latest/download/es-theme-knulli.zip")
         show_message("Theme installed successfully! Exiting...")
         pygame.quit()
         exit()
