@@ -5,7 +5,7 @@ import zipfile
 import re
 import shutil
 
-scriptVersion = "2.0.1"
+scriptVersion = "2.0.2"
 
 pygame.init()
 
@@ -71,9 +71,9 @@ def get_remote_theme_version():
         max_version = max(versions)
         beta_version_index = versions.index(max_version)
         if beta_version_index == 1:
-            show_message(f"Beta version of theme found: v{max_version}")
+            show_message(f"Beta version of theme on Github: v{max_version}")
         else:
-            show_message(f"New theme update is found: v{max_version}")
+            show_message(f"Latest theme version on Github: v{max_version}")
         return max_version
     else:
         return None
@@ -91,7 +91,7 @@ def download_file(url, destination):
                 f.write(data)
         return destination
     except Exception as e:
-        show_message(f"Error downloading: {str(e)}")
+        show_message(f"Error downloading, exiting...")
         raise
 
 def update_theme(destination, download_url):
