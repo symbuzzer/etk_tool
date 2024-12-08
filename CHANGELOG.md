@@ -1,3 +1,7 @@
+# v2.0.3
+- Fixed an issue which causes not update theme when pre-installed
+- batocera-save-overlay runs only when theme is pre-installed
+
 # v2.0.2
 - Modified some strings
 
