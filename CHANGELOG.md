@@ -1,3 +1,6 @@
+# v2.0.2
+- Modified some strings
+
 # v2.0.1
 - Fixed some serious issues
 - Modified a lot of strings due giving right infos to user
