@@ -2,7 +2,9 @@
 ## What is this?
 This is a easy installer and updater for [es-theme-knulli](https://github.com/symbuzzer/es-theme-knulli) theme for Knulli installed devices.  
 You can easily install theme and check/install its updates with one click from this tool.  
-Also it updates itself silencely when an update is available.
+Also it updates itself when an update is available.  
+[Video Preview](https://www.reddit.com/r/RG35XX_H/comments/1ha69te/esthemeknulliupdater_tool/)
+
 
 ## How to install?
 - Download [latest es-theme-knulli-updater](https://github.com/symbuzzer/etk_tool/releases/latest/download/es-theme-knulli-updater.sh)
