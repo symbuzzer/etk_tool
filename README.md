@@ -6,7 +6,7 @@ Also it updates itself silencely when an update is available.
 
 ## How to install?
 - Download [latest es-theme-knulli-updater](https://github.com/symbuzzer/etk_tool/releases/latest/download/es-theme-knulli-updater.sh)
-- Copy es-theme-knulli-updater.sh to ROMS/TOOLS folder as a game rom
+- Copy ES-THEME-KNULLI-UPDATER.SH to ROMS/TOOLS folder as a game rom
 - From Knulli, refresh gamelist and run ES-THEME-KNULLI-UPDATER from TOOLS collection
 - It will update itself if needed
 
