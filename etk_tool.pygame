@@ -5,7 +5,7 @@ import re
 import zipfile
 import shutil
 
-scriptVersion = "2.1.0"
+scriptVersion = "2.1.1"
 
 system_theme_path = "/usr/share/emulationstation/themes/es-theme-knulli"
 userdata_theme_path = "/userdata/themes/es-theme-knulli"
@@ -149,6 +149,7 @@ def main():
             show_message(f"Theme updating to v{remote_theme_version}...")
             update_theme(theme_destination, f"https://github.com/symbuzzer/es-theme-knulli/releases/download/v{remote_theme_version}/es-theme-knulli.zip")
             show_message("Theme update complete! Exiting...")
+            os.system("batocera-es-swissknife --restart")
             pygame.quit()
         else:
             show_message(f"Theme v{remote_theme_version} already installed!")
