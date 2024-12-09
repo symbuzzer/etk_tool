@@ -1,3 +1,7 @@
+# v2.1.0
+- For moving script from pygame to tools, created the sh script
+- Fixed script update path with latest changes
+
 # v2.0.3
 - Fixed an issue which causes not update theme when pre-installed
 - batocera-save-overlay runs only when theme is pre-installed
