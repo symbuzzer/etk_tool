@@ -1,14 +1,16 @@
+import os
 import pygame
 import requests
-import os
 import re
 import zipfile
 import shutil
 
-scriptVersion = "2.0.3"
+scriptVersion = "2.1.0"
 
 system_theme_path = "/usr/share/emulationstation/themes/es-theme-knulli"
 userdata_theme_path = "/userdata/themes/es-theme-knulli"
+
+script_directory = os.path.dirname(os.path.abspath(__file__))
 
 pygame.init()
 
@@ -127,8 +129,8 @@ def main():
 
     remote_script_version = get_remote_script_version()
     if remote_script_version and remote_script_version > scriptVersion:
-        show_message(f"ETK Tool v{remote_version} is available! Updating now...")
-        download_file("https://raw.githubusercontent.com/symbuzzer/etk_tool/main/etk_tool.pygame", "/userdata/roms/pygame/etk_tool.pygame")
+        show_message(f"ETK Tool v{remote_script_version} is available! Updating now...")
+        download_file("https://raw.githubusercontent.com/symbuzzer/etk_tool/main/etk_tool.pygame", os.path.join(script_directory, "etk_tool.pygame"))
         show_message("ETK Tool updated! Please restart.")
         pygame.quit()
 
