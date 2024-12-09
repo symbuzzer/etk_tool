@@ -5,9 +5,9 @@ You can easily install theme and check/install its updates with one click from t
 Also it updates itself silencely when an update is available.
 
 ## How to install?
-- Download [latest etk-tool](https://github.com/symbuzzer/etk_tool/releases/latest/download/etk_tool.pygame)
-- Copy etk_tool.pygame to ROMS/PYGAME folder as a game rom
-- From Knulli, refresh gamelist and run etk-tool from PYGAME collection
+- Download [latest es-theme-knulli-updater](https://github.com/symbuzzer/etk_tool/releases/latest/download/es-theme-knulli-updater.sh)
+- Copy es-theme-knulli-updater.sh to ROMS/TOOLS folder as a game rom
+- From Knulli, refresh gamelist and run ES-THEME-KNULLI-UPDATER from TOOLS collection
 - It will update itself if needed
 
 ## What is new?
