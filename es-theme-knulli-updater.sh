@@ -1,19 +1,23 @@
 #!/bin/bash
 
-version="1.0.0"
+version="1.0.1"
+echo "etk_tool script - Version $version"
 
 script_dir="$(dirname "$(realpath "$0")")"
+tool_dir="$script_dir/etk_tool"
 
-curl -L https://raw.githubusercontent.com/symbuzzer/etk_tool/refs/heads/main/es-theme-knulli-updater.sh -o "$script_dir/es-theme-knulli-updater.sh"
+mkdir -p "$tool_dir"
 
-if [ ! -f "$script_dir/etk_tool.pygame" ]; then
-    curl -L https://raw.githubusercontent.com/symbuzzer/etk_tool/refs/heads/main/etk_tool.pygame -o "$script_dir/etk_tool.pygame"
+curl -L https://raw.githubusercontent.com/symbuzzer/etk_tool/refs/heads/main/etk_tool.sh -o "$tool_dir/etk_tool.sh"
+
+if [ ! -f "$tool_dir/etk_tool.pygame" ]; then
+    curl -L https://raw.githubusercontent.com/symbuzzer/etk_tool/refs/heads/main/etk_tool.pygame -o "$tool_dir/etk_tool.pygame"
 fi
 
 if command -v python3 &>/dev/null; then
-    python3 "$script_dir/etk_tool.pygame"
+    python3 "$tool_dir/etk_tool.pygame"
 elif command -v python &>/dev/null; then
-    python "$script_dir/etk_tool.pygame"
+    python "$tool_dir/etk_tool.pygame"
 else
     exit 1
 fi
