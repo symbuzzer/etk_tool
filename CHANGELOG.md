@@ -1,3 +1,6 @@
+# v2.1.1
+- Added restart UI feature when theme is updated
+
 # v2.1.0
 - For moving script from pygame to tools, created the sh script
 - Fixed script update path with latest changes
