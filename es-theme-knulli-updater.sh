@@ -1,11 +1,12 @@
 #!/bin/bash
 
-version="1.0.1"
+version="1.0.2"
 
 script_dir="$(dirname "$(realpath "$0")")"
 tool_dir="$script_dir/etk_tool"
 
 mkdir -p "$tool_dir"
+chmod -R u+w "$tool_dir"
 
 curl -L https://raw.githubusercontent.com/symbuzzer/etk_tool/refs/heads/main/es-theme-knulli-updater.sh -o "$script_dir/es-theme-knulli-updater.sh"
 
