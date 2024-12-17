@@ -5,6 +5,7 @@
 - Removed releases from es-theme-knulli's Github page
 - Removed unnecassary beta.version
 - Edited some strings
+- Changed UI and font sizes
 
 # v2.1.1
 - Added restart UI feature when theme is updated
