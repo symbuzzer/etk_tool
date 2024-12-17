@@ -1,3 +1,11 @@
+# v2.2.0
+- Changed update URL's. So no need to create releases anymore
+- Changed remote version check URL's for different branches (main or beta)
+- Beta branch added to es-theme-knulli
+- Removed releases from es-theme-knulli's Github page
+- Removed unnecassary beta.version
+- Edited some strings
+
 # v2.1.1
 - Added restart UI feature when theme is updated
 
