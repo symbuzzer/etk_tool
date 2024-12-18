@@ -125,7 +125,6 @@ def update_theme(destination, download_url):
         if os.path.exists(system_theme_path):
             save_overlay()
 
-        show_message("Theme updated successfully!")
     except Exception as e:
         show_message(f"Error: {str(e)}")
         raise
@@ -165,6 +164,7 @@ def main():
         if latest_version and (not local_theme_version or latest_version > local_theme_version):
             show_message(f"Updating theme to v{latest_version}...")
             update_theme(theme_destination, download_url)
+            show_message("Theme updated successfully!")
         else:
             show_message(f"Theme v{local_theme_version} already up-to-date! Exiting...")
             pygame.quit()
