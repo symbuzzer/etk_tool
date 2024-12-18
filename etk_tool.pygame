@@ -5,7 +5,7 @@ import re
 import zipfile
 import shutil
 
-scriptVersion = "2.2.1"
+scriptVersion = "2.2.2"
 
 system_theme_path = "/usr/share/emulationstation/themes/es-theme-knulli"
 userdata_theme_path = "/userdata/themes/es-theme-knulli"
@@ -166,7 +166,7 @@ def main():
             show_message(f"Updating theme to v{latest_version}...")
             update_theme(theme_destination, download_url)
         else:
-            show_message(f"Theme v{local_theme_version} already up-to-date!")
+            show_message(f"Theme v{local_theme_version} already up-to-date! Exiting...")
             pygame.quit()
             return
 
