@@ -1,3 +1,9 @@
+# v2.2.2
+- Fixed some strings
+
+# v2.2.1
+- Fixed an issue about wrong version selection when theme not installed yet
+
 # v2.2.0
 - Changed update URL's. So no need to create releases anymore
 - Changed remote version check URL's for different branches (main or beta)
