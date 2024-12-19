@@ -5,7 +5,7 @@ import re
 import zipfile
 import shutil
 
-scriptVersion = "2.2.2"
+scriptVersion = "2.2.3"
 
 system_theme_path = "/usr/share/emulationstation/themes/es-theme-knulli"
 userdata_theme_path = "/userdata/themes/es-theme-knulli"
@@ -33,6 +33,11 @@ def check_internet():
         return True
     except requests.ConnectionError:
         return False
+
+def compare_versions(version1, version2):
+    v1_parts = list(map(int, version1.split(".")))
+    v2_parts = list(map(int, version2.split(".")))
+    return v1_parts > v2_parts
 
 def get_remote_script_version():
     url = "https://raw.githubusercontent.com/symbuzzer/etk_tool/main/etk_tool.pygame"
@@ -102,6 +107,7 @@ def update_theme(destination, download_url):
         zip_path = os.path.join(destination, "es-theme-knulli.zip")
         download_file(download_url, zip_path)
 
+        show_message("Installing...")
         temp_extract_path = os.path.join(destination, "temp_theme_extract")
         if os.path.exists(temp_extract_path):
             shutil.rmtree(temp_extract_path)
@@ -122,6 +128,8 @@ def update_theme(destination, download_url):
         shutil.rmtree(temp_extract_path)
         os.remove(zip_path)
 
+        show_message("Theme installed successfully!")
+
         if os.path.exists(system_theme_path):
             save_overlay()
 
@@ -137,7 +145,7 @@ def main():
         pygame.quit()
 
     remote_script_version = get_remote_script_version()
-    if remote_script_version and remote_script_version > scriptVersion:
+    if remote_script_version and compare_versions(remote_script_version, scriptVersion):
         show_message(f"ETK Tool v{remote_script_version} is available! Updating now...")
         download_file("https://raw.githubusercontent.com/symbuzzer/etk_tool/main/etk_tool.pygame",
                       os.path.join(script_directory, "etk_tool.pygame"))
@@ -158,28 +166,27 @@ def main():
     if theme_destination:
         local_theme_version = get_local_theme_version(theme_destination + "/es-theme-knulli")
 
-        latest_version = beta_version if beta_version and (not normal_version or beta_version > normal_version) else normal_version
+        latest_version = beta_version if beta_version and (not normal_version or compare_versions(beta_version, normal_version)) else normal_version
         download_url = "https://github.com/symbuzzer/es-theme-knulli/archive/refs/heads/beta.zip" if beta_version == latest_version else "https://github.com/symbuzzer/es-theme-knulli/archive/refs/heads/main.zip"
 
-        if latest_version and (not local_theme_version or latest_version > local_theme_version):
+        if latest_version and (not local_theme_version or compare_versions(latest_version, local_theme_version)):
             show_message(f"Updating theme to v{latest_version}...")
             update_theme(theme_destination, download_url)
-            show_message("Theme updated successfully!")
         else:
             show_message(f"Theme v{local_theme_version} already up-to-date! Exiting...")
             pygame.quit()
             return
 
-        show_message("Theme update complete! Restarting system...")
+        show_message("Restarting system...")
         os.system("batocera-es-swissknife --restart")
         pygame.quit()
     else:
         show_message("Theme not installed yet!")
-        latest_version = beta_version if beta_version and (not normal_version or beta_version > normal_version) else normal_version
+        latest_version = beta_version if beta_version and (not normal_version or compare_versions(beta_version, normal_version)) else normal_version
         download_url = "https://github.com/symbuzzer/es-theme-knulli/archive/refs/heads/beta.zip" if beta_version == latest_version else "https://github.com/symbuzzer/es-theme-knulli/archive/refs/heads/main.zip"
 
         update_theme("/userdata/themes", download_url)
-        show_message("Theme installed successfully! Exiting...")
+        show_message("Exiting...")
         pygame.quit()
 
 if __name__ == "__main__":
