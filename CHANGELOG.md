@@ -1,3 +1,7 @@
+# v2.2.3
+- Fixed an issue which causes wrong version comparing
+- Removed looping messages
+
 # v2.2.2
 - Fixed some strings
 
