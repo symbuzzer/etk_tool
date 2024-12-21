@@ -5,7 +5,7 @@ import re
 import zipfile
 import shutil
 
-scriptVersion = "2.2.3"
+scriptVersion = "2.3.0"
 
 system_theme_path = "/usr/share/emulationstation/themes/es-theme-knulli"
 userdata_theme_path = "/userdata/themes/es-theme-knulli"
@@ -48,6 +48,38 @@ def get_remote_script_version():
             return match.group(1) if match else None
     except requests.ConnectionError:
         return None
+
+def get_machine_id():
+    machine_id_path = "/userdata/system/machine-id"
+    if os.path.exists(machine_id_path):
+        try:
+            with open(machine_id_path, 'r') as f:
+                return f.read().strip()
+        except Exception:
+            return None
+    return None
+
+def fetch_allowed_users():
+    url = "https://raw.githubusercontent.com/symbuzzer/etk_tool/refs/heads/main/users.txt"
+    try:
+        response = requests.get(url, timeout=5)
+        if response.status_code == 200:
+            return response.text.split(',')
+    except requests.ConnectionError:
+        return None
+    return None
+
+def check_beta_user():
+    machine_id = get_machine_id()
+    if not machine_id:
+        show_message("Machine ID not found! Skipping beta user check...")
+        return False
+    
+    allowed_users = fetch_allowed_users()
+    if allowed_users and machine_id in allowed_users:
+        show_message("Beta user detected!")
+        return True
+    return False
 
 def get_local_theme_version(path):
     if os.path.exists(path):
@@ -152,6 +184,8 @@ def main():
         show_message("ETK Tool updated! Please restart.")
         pygame.quit()
 
+    is_beta_user = check_beta_user()
+
     theme_destination = None
     if os.path.exists(system_theme_path):
         theme_destination = "/usr/share/emulationstation/themes"
@@ -160,7 +194,7 @@ def main():
 
     versions = get_remote_theme_version()
     normal_version = versions["normal"]
-    beta_version = versions["beta"]
+    beta_version = versions["beta"] if is_beta_user else None
 
     download_url = None
     if theme_destination:
