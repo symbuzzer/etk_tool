@@ -1,4 +1,4 @@
-# 2.3.0
+# v2.3.0
 - Added machine-id check mechanism for beta users
 
 # v2.2.3
