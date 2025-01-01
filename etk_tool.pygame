@@ -5,7 +5,7 @@ import re
 import zipfile
 import shutil
 
-scriptVersion = "2.4.2"
+scriptVersion = "2.4.3"
 
 system_theme_path = "/usr/share/emulationstation/themes/es-theme-knulli"
 userdata_theme_path = "/userdata/themes/es-theme-knulli"
@@ -38,7 +38,6 @@ def compare_versions(version1, version2):
     print(f"Comparing {version1} and {version2}")
     v1_parts = list(map(lambda x: int(x.lstrip("0")), version1.split(".")))
     v2_parts = list(map(lambda x: int(x.lstrip("0")), version2.split(".")))
-    show_message(f"v1: {v1_parts}, v2: {v2_parts}")
     return v1_parts > v2_parts
 
 def get_remote_script_version():
