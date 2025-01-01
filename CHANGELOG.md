@@ -1,3 +1,7 @@
+# v2.4.x
+- Fixed an issue which causes wrong version comparing
+- Changed versioning system
+
 # v2.3.0
 - Added machine-id check mechanism for beta users
 
