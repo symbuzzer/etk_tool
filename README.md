@@ -14,3 +14,8 @@ Also it updates itself when an update is available.
 
 ## What is new?
 [Changelog](https://github.com/symbuzzer/etk_tool/blob/main/CHANGELOG.md)
+
+## Versioning
+The versioning system has been changed since v2.4.x to ensure that etk_tool works smoothly and users can update new test releases more easily.
+
+Now, from the version information in the form of vX.Y.Z; X represents major updates, Y represents minor new additions and bug fixes. Z is only important for testers. So don't worry about Z appearing as x in the changelog or elsewhere.
