@@ -5,7 +5,7 @@ import re
 import zipfile
 import shutil
 
-scriptVersion = "2.3.1"
+scriptVersion = "2.3.2"
 
 system_theme_path = "/usr/share/emulationstation/themes/es-theme-knulli"
 userdata_theme_path = "/userdata/themes/es-theme-knulli"
@@ -38,17 +38,17 @@ def compare_versions(version1, version2):
     v1_parts = list(map(int, version1.split(".")))
     v2_parts = list(map(int, version2.split(".")))
     
-    max_length = max(len(v1_parts), len(v2_parts))
-    v1_parts.extend([0] * (max_length - len(v1_parts)))
-    v2_parts.extend([0] * (max_length - len(v2_parts)))
+    while len(v1_parts) < len(v2_parts):
+        v1_parts.append(0)
+    while len(v2_parts) < len(v1_parts):
+        v2_parts.append(0)
     
     for v1, v2 in zip(v1_parts, v2_parts):
         if v1 > v2:
             return True
         elif v1 < v2:
             return False
-    return False
-
+    return False  # Eğer tüm parçalar eşitse, eşit kabul edilir
 
 def get_remote_script_version():
     url = "https://raw.githubusercontent.com/symbuzzer/etk_tool/main/etk_tool.pygame"
