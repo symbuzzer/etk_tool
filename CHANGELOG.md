@@ -1,5 +1,7 @@
 # v2.5.x
 - Added some strings
+- Message display times have been shortened
+- Fixed some strings
 
 # v2.4.x
 - Fixed an issue which causes wrong version comparing
