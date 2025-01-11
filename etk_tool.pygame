@@ -5,7 +5,7 @@ import re
 import zipfile
 import shutil
 
-scriptVersion = "2.4.3"
+scriptVersion = "2.5.1"
 
 system_theme_path = "/usr/share/emulationstation/themes/es-theme-knulli"
 userdata_theme_path = "/userdata/themes/es-theme-knulli"
@@ -25,7 +25,7 @@ def show_message(message):
     text_rect = text_surface.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
     screen.blit(text_surface, text_rect.topleft)
     pygame.display.flip()
-    pygame.time.wait(2000)
+    pygame.time.wait(1500)
 
 def check_internet():
     try:
@@ -205,6 +205,7 @@ def main():
         download_url = "https://github.com/symbuzzer/es-theme-knulli/archive/refs/heads/beta.zip" if beta_version == latest_version else "https://github.com/symbuzzer/es-theme-knulli/archive/refs/heads/main.zip"
 
         if latest_version and (not local_theme_version or compare_versions(latest_version, local_theme_version)):
+            show_message(f"New v{latest_version} update found!")
             show_message(f"Updating theme to v{latest_version}...")
             update_theme(theme_destination, download_url)
         else:
