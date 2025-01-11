@@ -5,7 +5,7 @@ import re
 import zipfile
 import shutil
 
-scriptVersion = "2.5.1"
+scriptVersion = "2.5.2"
 
 system_theme_path = "/usr/share/emulationstation/themes/es-theme-knulli"
 userdata_theme_path = "/userdata/themes/es-theme-knulli"
@@ -215,6 +215,7 @@ def main():
 
         show_message("Restarting system...")
         os.system("batocera-es-swissknife --restart")
+        show_message(" ")
         pygame.quit()
     else:
         show_message("Theme not installed yet!")
