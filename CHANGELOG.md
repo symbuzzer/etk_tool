@@ -1,3 +1,6 @@
+# v2.5.x
+- Added some strings
+
 # v2.4.x
 - Fixed an issue which causes wrong version comparing
 - Changed versioning system
