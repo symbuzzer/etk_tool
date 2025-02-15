@@ -1,3 +1,6 @@
+# v2.6.1
+- Fixed an issue which causes wrong version comparing
+
 # v2.5.x
 - Added some strings
 - Message display times have been shortened
