@@ -1,5 +1,6 @@
-# v2.6.1
+# v2.6.x
 - Fixed an issue which causes wrong version comparing
+- Fixed an issue which causes loop of code after updated theme
 
 # v2.5.x
 - Added some strings
