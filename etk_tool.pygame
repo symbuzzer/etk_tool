@@ -5,7 +5,7 @@ import re
 import zipfile
 import shutil
 
-scriptVersion = "2.5.2"
+scriptVersion = "2.6.1"
 
 system_theme_path = "/usr/share/emulationstation/themes/es-theme-knulli"
 userdata_theme_path = "/userdata/themes/es-theme-knulli"
@@ -36,8 +36,11 @@ def check_internet():
 
 def compare_versions(version1, version2):
     print(f"Comparing {version1} and {version2}")
-    v1_parts = list(map(lambda x: int(x.lstrip("0")), version1.split(".")))
-    v2_parts = list(map(lambda x: int(x.lstrip("0")), version2.split(".")))
+    v1_parts = list(map(int, version1.split(".")))
+    v2_parts = list(map(int, version2.split(".")))
+    max_length = max(len(v1_parts), len(v2_parts))
+    v1_parts.extend([0] * (max_length - len(v1_parts)))
+    v2_parts.extend([0] * (max_length - len(v2_parts)))
     return v1_parts > v2_parts
 
 def get_remote_script_version():
