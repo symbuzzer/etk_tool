@@ -1,3 +1,6 @@
+# v2.7.x
+- Fixed an issue which causes loop of code after updated theme
+
 # v2.6.x
 - Fixed an issue which causes wrong version comparing
 - Fixed an issue which causes loop of code after updated theme
