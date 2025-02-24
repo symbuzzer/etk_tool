@@ -1,3 +1,6 @@
+# v2.9.1
+- Reverted default font due source-in-use issue
+
 # v2.8.x
 - Added feature to use es-theme-knulli's font if exists
 
