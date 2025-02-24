@@ -5,7 +5,7 @@ import re
 import zipfile
 import shutil
 
-scriptVersion = "2.7.1"
+scriptVersion = "2.7.2"
 
 system_theme_path = "/usr/share/emulationstation/themes/es-theme-knulli"
 userdata_theme_path = "/userdata/themes/es-theme-knulli"
@@ -14,8 +14,18 @@ script_directory = os.path.dirname(os.path.abspath(__file__))
 
 pygame.init()
 
-font = pygame.font.Font(None, 36)
-message_font = pygame.font.Font(None, 36)
+def get_font():
+    font_paths = [
+        os.path.join(system_theme_path, "_inc/fonts/font.ttf"),
+        os.path.join(userdata_theme_path, "_inc/fonts/font.ttf")
+    ]
+    for font_path in font_paths:
+        if os.path.exists(font_path):
+            return pygame.font.Font(font_path, 36)
+    return pygame.font.Font(None, 36)
+
+font = get_font()
+message_font = get_font()
 screen = pygame.display.set_mode((640, 480))
 pygame.display.set_caption("ETK Tool")
 
