@@ -5,7 +5,7 @@ import re
 import zipfile
 import shutil
 
-scriptVersion = "2.7.2"
+scriptVersion = "2.7.3"
 
 system_theme_path = "/usr/share/emulationstation/themes/es-theme-knulli"
 userdata_theme_path = "/userdata/themes/es-theme-knulli"
@@ -21,7 +21,7 @@ def get_font():
     ]
     for font_path in font_paths:
         if os.path.exists(font_path):
-            return pygame.font.Font(font_path, 36)
+            return pygame.font.Font(font_path, 24)
     return pygame.font.Font(None, 36)
 
 font = get_font()
