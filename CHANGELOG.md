@@ -1,3 +1,6 @@
+# v2.8.x
+- Added feature to use es-theme-knulli's font if exists
+
 # v2.7.x
 - Fixed an issue which causes loop of code after updated theme
 
