@@ -5,7 +5,7 @@ import re
 import zipfile
 import shutil
 
-scriptVersion = "2.9.1"
+scriptVersion = "2.9.2"
 
 system_theme_path = "/usr/share/emulationstation/themes/es-theme-knulli"
 userdata_theme_path = "/userdata/themes/es-theme-knulli"
@@ -78,7 +78,6 @@ def check_beta_user():
     if not machine_id:
         show_message("Machine ID not found! Skipping beta user check...")
         return False
-    
     allowed_users = fetch_allowed_users()
     if allowed_users and machine_id in allowed_users:
         show_message("Beta user detected!")
@@ -101,9 +100,7 @@ def get_remote_theme_version():
         "normal": "https://raw.githubusercontent.com/symbuzzer/es-theme-knulli/refs/heads/main/theme.xml",
         "beta": "https://raw.githubusercontent.com/symbuzzer/es-theme-knulli/refs/heads/beta/theme.xml"
     }
-
     versions = {"normal": None, "beta": None}
-
     for version_type, url in urls.items():
         try:
             response = requests.get(url, timeout=5)
@@ -113,7 +110,6 @@ def get_remote_theme_version():
                     versions[version_type] = match.group(1)
         except requests.ConnectionError:
             pass
-
     return versions
 
 def download_file(url, destination):
@@ -131,7 +127,7 @@ def download_file(url, destination):
 
 def save_overlay():
     show_message("Saving overlay...")
-    result = os.system("sh /usr/bin/batocera-save-overlay")
+    result = os.system("knulli-save-overlay")
     if result == 0:
         show_message("Overlay saved successfully!")
     else:
@@ -218,7 +214,7 @@ def main():
 
         show_message("Restarting system...")
         show_message(" ")
-        os.system("batocera-es-swissknife --restart")
+        os.system("knulli-softreset")
         pygame.quit()
     else:
         show_message("Theme not installed yet!")
