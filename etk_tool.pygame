@@ -4,8 +4,9 @@ import requests
 import re
 import zipfile
 import shutil
+import subprocess
 
-scriptVersion = "2.9.4"
+scriptVersion = "2.9.5"
 
 system_theme_path = "/usr/share/emulationstation/themes/es-theme-knulli"
 userdata_theme_path = "/userdata/themes/es-theme-knulli"
@@ -214,6 +215,7 @@ def main():
 
         show_message("Restarting system...")
         show_message(" ")
+        subprocess.run(['knulli-es-swissknife', '--remount'])
         subprocess.run(['reboot'])
         pygame.quit()
     else:
