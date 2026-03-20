@@ -1,3 +1,6 @@
+# v2.10.x
+- Fixed all issues in 2026
+
 # v2.9.x
 - Reverted default font due source-in-use issue
 
