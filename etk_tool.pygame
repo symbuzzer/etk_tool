@@ -6,7 +6,7 @@ import zipfile
 import shutil
 import subprocess
 
-scriptVersion = "2.9.5"
+scriptVersion = "2.10.1"
 
 system_theme_path = "/usr/share/emulationstation/themes/es-theme-knulli"
 userdata_theme_path = "/userdata/themes/es-theme-knulli"
